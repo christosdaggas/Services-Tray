@@ -1,0 +1,51 @@
+[package]
+name = "services-tray"
+version = "0.3.0"
+edition = "2021"
+description = "Start, stop and restart systemd user and system services from the system tray"
+homepage = "https://chrisdaggas.com"
+license = "MIT"
+publish = false
+
+[dependencies]
+anyhow = "1"
+dirs = "6"
+gtk4 = { version = "0.11", features = ["v4_10"] }
+libadwaita = { version = "0.9", features = ["v1_2", "v1_4"] }
+ksni = { version = "0.3", features = ["blocking"] }
+libc = "0.2"
+notify-rust = "4"
+png = "0.17"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+
+[package.metadata.generate-rpm]
+license = "MIT"
+assets = [
+    { source = "target/release/services-tray", dest = "/usr/bin/services-tray", mode = "755" },
+    { source = "assets/services-tray.png", dest = "/usr/share/icons/hicolor/512x512/apps/services-tray.png", mode = "644" },
+    { source = "assets/services-tray.svg", dest = "/usr/share/icons/hicolor/scalable/apps/services-tray.svg", mode = "644" },
+    { source = "assets/services-tray-symbolic.svg", dest = "/usr/share/icons/hicolor/symbolic/apps/services-tray-symbolic.svg", mode = "644" },
+    { source = "assets/services-tray.desktop", dest = "/usr/share/applications/services-tray.desktop", mode = "644" },
+    { source = "LICENSE", dest = "/usr/share/licenses/services-tray/LICENSE", mode = "644", doc = true },
+    { source = "README.md", dest = "/usr/share/doc/services-tray/README.md", mode = "644", doc = true },
+]
+post_install_script = """
+gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor >/dev/null 2>&1 || :
+update-desktop-database -q >/dev/null 2>&1 || :
+"""
+post_uninstall_script = """
+gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor >/dev/null 2>&1 || :
+update-desktop-database -q >/dev/null 2>&1 || :
+"""
+
+[package.metadata.generate-rpm.requires]
+xdg-utils = "*"
+
+[package.metadata.generate-rpm.recommends]
+gnome-shell-extension-appindicator = "*"

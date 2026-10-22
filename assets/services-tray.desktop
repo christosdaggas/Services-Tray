@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Services Tray
+Comment=Start, stop and restart systemd services from the system tray
+Exec=services-tray
+Icon=services-tray
+Terminal=false
+Categories=System;
+Keywords=systemd;service;services;tray;systemctl;
+StartupNotify=false
+StartupWMClass=io.github.servicestray.ServicesTray
